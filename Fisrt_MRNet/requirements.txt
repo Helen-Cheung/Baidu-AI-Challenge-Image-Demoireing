@@ -1,0 +1,2 @@
+torch==1.8.1
+paddlepaddle-gpu==2.2.1
