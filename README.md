@@ -17,3 +17,8 @@
 images 为带摩尔纹的源图像数据，gts 为无摩尔纹的真值数据（仅有训练集数据提供gts ，A榜测试集、B榜测试集数据均不提供gts）；
 images 与 gts 中的图片根据图片名称一一对应。
 * 训练集: [下载](https://staticsns.cdn.bcebos.com/amis/2021-12/1639022237247/moire_train_dataset.zip)
+* A榜测试集: [下载](https://staticsns.cdn.bcebos.com/amis/2021-12/1639022368156/moire_testA_dataset.zip)
+* B榜测试集: [下载](https://staticsns.cdn.bcebos.com/amis/2022-1/1642677626212/moire_testB_dataset.zip)
+
+### 项目简介
+本项目为百度AI大赛：文档图像摩尔纹消除(赛题一)的总结，包含前三名方案的学习和复现。
