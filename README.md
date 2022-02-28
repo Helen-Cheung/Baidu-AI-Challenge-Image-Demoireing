@@ -24,3 +24,72 @@ images 与 gts 中的图片根据图片名称一一对应。
 * A榜测试集: [下载](https://staticsns.cdn.bcebos.com/amis/2021-12/1639022368156/moire_testA_dataset.zip)
 * B榜测试集: [下载](https://staticsns.cdn.bcebos.com/amis/2022-1/1642677626212/moire_testB_dataset.zip)
 
+## 数据集预处理
+给定的训练集只有1000对moire-sharp图像，同时由于图像的分辨率非常大且不相同，没办法直接训练，因此我们需要对训练数据进行裁剪和增强。(参考自第一名方案)
+
+(1) 以60%的重叠率将图像切分成512 x 512的patch；
+
+(2) 训练数据增强：水平翻转，竖直翻转。
+
+![image](https://user-images.githubusercontent.com/62683546/155955346-fcbf5f16-6e4c-40f1-aa51-fd4acc7f6803.png)
+
+## 模型选择
+* WDNet: [https://arxiv.org/abs/2004.00406](https://arxiv.org/abs/2004.00406)
+* MBCNN: [https://arxiv.org/abs/2007.07173](https://arxiv.org/abs/2007.07173)
+
+### WDNet
+#### 动机
+* 图像去摩尔纹不仅需要恢复高频图像细节，而且还需要去除频率跨度较大的波纹图案。
+* 大多数现有的方法都是在RGB空间中进行处理，难以区分摩尔条纹和真实的图像内容，以及在处理低频摩尔图案中存在困难。
+* 图像摩尔纹在频域中可以较轻松地处理。在经过小波变换后，摩尔条纹在某些小波子带中会更加明显，因此处理这些子带中可以更轻松地去除摩尔纹。
+
+#### 模型结构
+
+![image](https://user-images.githubusercontent.com/62683546/155960519-3c584db4-f223-4da8-9a14-234e5dae81a3.png)
+
+整体网络结构如(a)所示，输入**H x W x 3**的图，经过**2级haar小波变换**得到频域 **(H/4) x (W/4) x 48** 尺寸的图，接下来网络主要部分是提出的双分支结构，一个是（b）中的**Dense Branch**，另一个是(c)中的**Dilation Branch**。
+
+**Dense Branch** : 利用DenseNet模块的旁路连接和特征重用缓解梯度消失，特取图像特征。WDNet中引入了新的**DPM**模块提取不同方向的摩尔纹模式。
+
+**Dilation Branch** : 利用空洞卷积提高感受野，利用普通卷积减少网络伪影。
+
+**Direction Perception Module** : 如图所示，用不同方向的卷积提取不同方向的摩尔纹模式。
+
+![image](https://user-images.githubusercontent.com/62683546/155962821-28046a38-0b70-4ded-a52c-b1a34bbbceb5.png)
+
+#### 损失函数
+![image](https://user-images.githubusercontent.com/62683546/155966069-e1af6ac6-922d-4bdf-9ac3-9815c2f68e9e.png)
+
+其中包括L1损失、注意力损失、感知损失、小波损失。
+
+**Wavelet Loss** : ![2131](https://user-images.githubusercontent.com/62683546/155990270-dac876a6-e895-4976-980a-48f2717cc868.png)
+* **MSE Loss** : ![image](https://user-images.githubusercontent.com/62683546/155990345-616813ed-0ad1-4c50-af2c-416d43b01a9b.png)
+* **detail Loss** : ![image](https://user-images.githubusercontent.com/62683546/155990422-7fff44b1-2faa-42c6-8374-2b5f28bca808.png)
+
+**Attention Loss**(DPM): ![image](https://user-images.githubusercontent.com/62683546/155990506-fe7d1249-bf29-4f0b-8958-f256d67bb048.png)
+
+
+### MBCNN
+#### 动机（特点）
+* 模型采用了针对三个不同比例的分支的多比例设计。在不同尺度之间，采用**渐进式上采样策略**以平滑地提高分辨率。
+* 图像去摩尔纹任务可以分为两步，即**摩尔条纹去除**和**色调映射**。
+
+#### 模型结构
+![3333](https://user-images.githubusercontent.com/62683546/155993413-7b742321-35bd-44fc-a2fe-3f7490ac1ad7.png)
+
+**摩尔纹消除模块(MTRB)**:
+
+![image](https://user-images.githubusercontent.com/62683546/155993638-76bed9bd-78f6-430e-8cf0-6d16572e06ae.png)
+
+![image](https://user-images.githubusercontent.com/62683546/155993770-c6761774-c311-4a66-9c67-e143689cc174.png)
+
+**全局色调恢复模块(GTMB)**:
+
+![image](https://user-images.githubusercontent.com/62683546/155993949-1c733a33-8a63-4610-8a5a-cd901cba3880.png)
+
+**局部色调恢复模块(LTMB)**:
+
+![image](https://user-images.githubusercontent.com/62683546/155994052-4273093e-772f-480b-a38a-2e5d556dcfa2.png)
+
+
+
