@@ -31,7 +31,7 @@ images 与 gts 中的图片根据图片名称一一对应。
 
 (2) 训练数据增强：水平翻转，竖直翻转。
 
-![image](https://user-images.githubusercontent.com/62683546/155955346-fcbf5f16-6e4c-40f1-aa51-fd4acc7f6803.png)
+![1](https://user-images.githubusercontent.com/62683546/156156251-19300689-61e2-4032-b789-6adbe70fec06.png)
 
 ## 模型选择
 * WDNet: [https://arxiv.org/abs/2004.00406](https://arxiv.org/abs/2004.00406)
@@ -45,7 +45,7 @@ images 与 gts 中的图片根据图片名称一一对应。
 
 #### 模型结构
 
-![image](https://user-images.githubusercontent.com/62683546/155960519-3c584db4-f223-4da8-9a14-234e5dae81a3.png)
+![2](https://user-images.githubusercontent.com/62683546/156156308-59300020-df3a-4a1e-be40-6c9f61b480fd.png)
 
 整体网络结构如(a)所示，输入**H x W x 3**的图，经过**2级haar小波变换**得到频域 **(H/4) x (W/4) x 48** 尺寸的图，接下来网络主要部分是提出的双分支结构，一个是（b）中的**Dense Branch**，另一个是(c)中的**Dilation Branch**。
 
@@ -75,7 +75,7 @@ images 与 gts 中的图片根据图片名称一一对应。
 * 图像去摩尔纹任务可以分为两步，即**摩尔条纹去除**和**色调映射**。
 
 #### 模型结构
-![3333](https://user-images.githubusercontent.com/62683546/155993413-7b742321-35bd-44fc-a2fe-3f7490ac1ad7.png)
+![3](https://user-images.githubusercontent.com/62683546/156156328-f43b4ceb-cace-49e5-9c8d-dfcba1c24e53.png)
 
 **摩尔纹消除模块(MTRB)**:
 
